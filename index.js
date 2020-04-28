@@ -14,7 +14,8 @@ app.get('/users', function(req, res){
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
- const users = [
+
+const users = [
   {
     "address": {
       "geo": {
@@ -140,15 +141,5 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
     "username": "Elwyn.Skiles",
     "email": "Telly.Hoeger@billy.biz",
     "__v": 0
-  },
-  {
-    "address": {
-      "geo": {
-        "lat": 24.6463,
-        "lng": -168.8889
-      },
-      "street": "Dayna Park",
-      "suite": "Suite 449",
-      "city": "Bartholomebury",
-      "zipcode": "76495-3109"
-    },
+  }
+]
