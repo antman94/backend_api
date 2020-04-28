@@ -3,7 +3,14 @@ const express = require('express')
 
 
 
+// const uuidv4 = require('uuid/v4');
+
+const { v4: uuidv4 } = require('uuid');
+
+
+
 const app = express()
+app.use(express.json())
 
 const port = process.env.PORT || 3000;
 
@@ -11,8 +18,30 @@ app.get('/users', function(req, res){
   res.send(users)
 })
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.get('/users/:id', function(req, res) {
 
+  const user = users.find(user => user.id == req.params.id)
+  res.status(200).send(user)
+  
+})
+
+app.post('/users', function (req, res) {
+  const newId = uuidv4();
+  let response = {
+    name: req.body.name,
+    username: req.body.username,
+    email: req.body.email,
+    _id: newId,
+  }
+
+  // res.status(201).send(r
+  res.status(201).send(response);
+
+
+
+})
+
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
 const users = [
