@@ -3,23 +3,17 @@ const users = require('./users')
 
 const { v4: uuidv4 } = require('uuid');
 
-module.exports = {
-  getUsers,
-  getUser,
-  postUser,
-  putUser,
-  deleteUser
-}
+
 
 
 
 
 
 getUsers = (req, res) =>{
-  res.send(users)
+  res.status(200).send(users)
 }
 
-getUser = (req, res) => {
+getSingleUser = (req, res) => {
   const user = users.find(user => user.id == req.params.id)
   res.status(200).send(user)
 }
@@ -42,6 +36,8 @@ putUser = (req, res) => {
   const { id, _id } = user;
   const { name, username, email} = req.body;
   const updatedUser = {name, username, email, _id, id}
+
+  res.status(201).send(updatedUser);
   // lägg till det från din stationära dator.
 }
 
@@ -57,7 +53,13 @@ deleteUser = (req, res) => {
 }
 
 
-
+module.exports = {
+  getUsers,
+  getSingleUser,
+  postUser,
+  putUser,
+  deleteUser
+}
 
 
 

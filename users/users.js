@@ -1,4 +1,4 @@
-module.exports = users;
+
 
 const users = [
   {
@@ -58,3 +58,5 @@ const users = [
     "__v": 0
   }
 ]
+
+module.exports = users;
