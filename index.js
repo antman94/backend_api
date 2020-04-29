@@ -8,7 +8,7 @@ const app = express()
 
 app.use(express.json())
 
-app.get('/users/:id', users.get(req, res) {
+app.get('/users/:id', usersMethods.getUser) {
   const user = users.find(user => user.id == req.params.id)
   res.status(200).send(user)
 })
