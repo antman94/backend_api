@@ -1,4 +1,3 @@
-module.exports = posts;
 
 const posts = [
 {
@@ -474,3 +473,6 @@ const posts = [
   "__v": 0
 },
 ]
+
+
+module.exports = posts;
