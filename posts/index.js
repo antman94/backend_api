@@ -1,6 +1,6 @@
 const posts = require('./posts')
-
 const { v4: uuidv4 } = require('uuid');
+
 
 getPosts = (req, res) => {
   res.status(200).send(posts)
@@ -26,6 +26,7 @@ postPost = (req, res) => {
 
 putPost = (req, res) => {
   const post = posts.find(post => post.id == req.params.id)
+
   if(post) {
     const { id, _id } = post;
     const { body, title, userId} = req.body;
@@ -35,14 +36,11 @@ putPost = (req, res) => {
   else{
     res.status(400).send('The given post ID does not exist.');
   }
-
 }
-
-
-
 
 deletePost = (req, res) => {
   const i = posts.findIndex(post => post.id == req.params.id);
+  
   if(i == -1) {
     res.status(204).send();
   }

@@ -1,12 +1,5 @@
-
 const users = require('./users')
-
 const { v4: uuidv4 } = require('uuid');
-
-
-
-
-
 
 
 getUsers = (req, res) =>{
@@ -33,22 +26,22 @@ postUser = (req, res) => {
 
 putUser = (req, res) => {
   const user = users.find(user => user.id == req.params.id)
+
   if(user) {
     const { id, _id } = user;
     const { name, username, email} = req.body;
     const updatedUser = {name, username, email, _id, id}
     res.status(200).send(updatedUser)
   }
-
   else{
     res.status(400).send('The given user ID does not exist.');
   }
-
 }
 
 
 deleteUser = (req, res) => {
   const i = users.findIndex(user => user.id == req.params.id);
+
   if(i == -1) {
     res.status(204).send();
   }
