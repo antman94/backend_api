@@ -26,12 +26,20 @@ postPost = (req, res) => {
 
 putPost = (req, res) => {
   const post = posts.find(post => post.id == req.params.id)
-  const { id, _id } = post;
-  const { body, title, userId} = req.body;
-  const updatedPost = {_id, userId, id, title, body}
-  res.status(201).send(updatedPost);
-  // lägg till det från din stationära dator.
+  if(post) {
+    const { id, _id } = post;
+    const { body, title, userId} = req.body;
+    const updatedPost = {_id, userId, id, title, body}
+    res.status(201).send(updatedPost);
+  }
+  else{
+    res.status(400).send('The given post ID does not exist.');
+  }
+
 }
+
+
+
 
 deletePost = (req, res) => {
   const i = posts.findIndex(post => post.id == req.params.id);
@@ -39,16 +47,16 @@ deletePost = (req, res) => {
     res.status(204).send();
   }
   else {
-    posts.splice(i, 1)
-    res.status(200).send();
+    const deletedPost = posts.splice(i, 1)
+    res.status(200).send(`Post ${deletedPost[0].id} successfully deleted.`);
   }
 }
 
 
 module.exports = {
-getPosts,
-getSinglePost,
-postPost,
-putPost,
-deletePost,
+  getPosts,
+  getSinglePost,
+  postPost,
+  putPost,
+  deletePost,
 }

@@ -53,8 +53,8 @@ deleteUser = (req, res) => {
     res.status(204).send();
   }
   else {
-    users.splice(i, 1)
-    res.status(200).send();
+    const deletedUser = users.splice(i, 1)
+    res.status(200).send(`User ${deletedUser[0].id} successfully deleted.`);
   }
 }
 
