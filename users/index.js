@@ -33,13 +33,19 @@ postUser = (req, res) => {
 
 putUser = (req, res) => {
   const user = users.find(user => user.id == req.params.id)
-  const { id, _id } = user;
-  const { name, username, email} = req.body;
-  const updatedUser = {name, username, email, _id, id}
+  if(user) {
+    const { id, _id } = user;
+    const { name, username, email} = req.body;
+    const updatedUser = {name, username, email, _id, id}
+    res.status(200).send(updatedUser)
+  }
 
-  res.status(201).send(updatedUser);
-  // lägg till det från din stationära dator.
+  else{
+    res.status(400).send('The given user ID does not exist.');
+  }
+
 }
+
 
 deleteUser = (req, res) => {
   const i = users.findIndex(user => user.id == req.params.id);
