@@ -1,9 +1,12 @@
-const posts = require('../posts/posts')
 
-const { v4: uuidv4 } = require('uuid');
 
-listPosts = (req, res) => {
-  res.status(200).send(posts)
+listPosts = (req, res, next) =>{
+  req.models.Post.find().then((posts) => {
+    
+    return res.send(posts);
+  }).catch((error) => {
+    next(error)
+  })
 }
 
 getSinglePost = (req, res) => {
@@ -11,45 +14,81 @@ getSinglePost = (req, res) => {
   res.status(200).send(post)
 }
 
-createPost = (req, res) => {
-  const newId = uuidv4();
-  const newPost = {
-    _id: newId,
+createPost = (req, res, next) => {
+
+  req.models.Post.find().sort({ _id: -1 }).limit(1)
+    .then((x) => {
+
+      req.models.Post.create({
+        userId: req.body.userId,
+        id: x[0].id+1,
+        title: req.body.title,
+        body: req.body.body,
+      }).then((post) => {
+        return res.status(201).send(post)
+      }).catch((error) => {
+        next(error)
+      })
+  })
+}
+
+replacePost = (req, res, next) => {
+
+  const replacementPost = {
+    id: req.params.id,
     userId: req.body.userId,
-    id: posts.length +1,
     title: req.body.title,
     body: req.body.body,
   }
-  res.status(201).send(newPost);
-  posts.push(newPost);
+  const result = req.models.Post.replaceOne({ 
+    id: req.params.id }, 
+    replacementPost).then((post) => {
+      return res.status(200).send(post)
+    }).catch((error) => {
+      next(error)
+    })
+  result.n; // Number of documents matched
+  result.nModified; // Number of documents modified
 }
 
-updatePost = (req, res) => {
-  const post = posts.find(post => post.id == req.params.id)
-  if(post) {
-    const { id, _id } = post;
-    const { body, title, userId} = req.body;
-    const updatedPost = {_id, userId, id, title, body}
-    res.status(201).send(updatedPost);
+updatePost = (req, res, next) => {
+
+  const updatedPost = {
+    userId: req.body.userId,
+    title: req.body.title,
+    body: req.body.body,
   }
-  else{
-    res.status(400).send('The given post ID does not exist.');
-  }
+
+  const post = req.models.Post.updateOne(
+    {id: req.params.id}, 
+    updatedPost, 
+    { 
+      new: true,
+      upsert: true,
+      runvalidators: true,
+     }
+    ).then((update) => {
+      return res.status(200).send(update)
+    }).catch((error) => {
+      next(error)
+    })
 
 }
 
 
 
+deletePost = (req, res, next) => {
 
-deletePost = (req, res) => {
-  const i = posts.findIndex(post => post.id == req.params.id);
-  if(i == -1) {
-    res.status(204).send();
-  }
-  else {
-    const deletedPost = posts.splice(i, 1)
-    res.status(200).send(`Post ${deletedPost[0].id} successfully deleted.`);
-  }
+  req.models.Post.deleteOne({ 
+    id: req.params.id
+  }).then((deleted) => {
+    if(deleted.n)
+      return res.send(deleted).status(200)
+    res.sendStatus(204)
+  }).catch((error) => {
+    next(error)
+  })
+ 
 }
 
 
@@ -57,6 +96,7 @@ module.exports = {
   listPosts,
   getSinglePost,
   createPost,
-  updatePost,
+  replacePost,
   deletePost,
+  updatePost
 }
