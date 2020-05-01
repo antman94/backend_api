@@ -1,33 +1,29 @@
 const express = require('express')
-const usersMethods = require('./users')
-const postMethods = require('./posts/index.js')
 
 const app = express()
+const db = require('./models');
+const routes = require('./routes');
+
+// Add middleware for parsing the body to req.body
+// middlewares are executed in the order added, so add before routes
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-// User methods
-app.get('/users', usersMethods.getUsers);
+app.use((req, res, next) => {
+  req.models = db.models
+  next()
+})
 
-app.get('/users/:id', usersMethods.getSingleUser);
-
-app.post('/users', usersMethods.postUser);
-
-app.put('/users/:id', usersMethods.putUser);
-
-app.delete('/users/:id', usersMethods.deleteUser);
-
-// Post methods
-
-app.get('/posts', postMethods.getPosts)
-app.get('/posts/:id', postMethods.getSinglePost)
-app.post('/posts', postMethods.postPost)
-app.put('/posts/:id', postMethods.putPost)
-app.delete('/posts/:id', postMethods.deletePost)
-
+app.use('/', routes);
 
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+db.connectDb().then(() => {
+  const listener = app.listen(port, () => {
+    console.info(`Example app listening on port ${listener.address().port}!`)
+  })
+});
+
 
 
