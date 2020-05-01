@@ -3,6 +3,8 @@ const users = require('../users/users')
 
 const { v4: uuidv4 } = require('uuid');
 
+let id = 10;
+
 
 listUsers = (req, res, next) =>{
   req.models.User.find().then((users) => {
@@ -18,7 +20,10 @@ getSingleUser = (req, res) => {
 }
 
 createUser = (req, res, next) => {
+  const newId = uuidv4();
+  id++;
   req.models.User.create({
+    id: id,
     name: req.body.name,
     username: req.body.username,
     email: req.body.email,
@@ -39,18 +44,39 @@ createUser = (req, res, next) => {
   })
 }
 
-updateUser = (req, res) => {
-  const user = users.find(user => user.id == req.params.id)
-  if(user) {
-    const { id, _id } = user;
-    const { name, username, email} = req.body;
-    const updatedUser = {name, username, email, _id, id}
-    res.status(200).send(updatedUser)
+updateUser = (req, res, next) => {
+
+  const updatedUser = {
+    name: req.body.name,
+    username: req.body.username,
+    email: req.body.email,
+    address: {
+      street: req.body.address.street,
+      suite: req.body.address.suite,
+      city: req.body.address.city,
+      zipcode: req.body.address.zipcode,
+      geo: {
+        lat: req.body.address.geo.lat,
+        lng: req.body.address.geo.lng,
+      }
+    }
   }
 
-  else{
-    res.status(400).send('The given user ID does not exist.');
-  }
+  const user = req.models.User.findOneAndUpdate(
+    {"id": req.params.id}, 
+    updatedUser, 
+    { new: true, }
+    ).then((update) => {
+      return res.status(200).send(update)
+    }).catch((error) => {
+      next(error)
+    })
+
+  
+
+    
+  
+
 
 }
 
@@ -66,8 +92,13 @@ deleteUser = (req, res) => {
   }
 }
 
-getById = (req, res, next) => {
+/* getById = (req, res, next) => {
   req.models.User.findById(req.params.id).then((user) => {
+    return res.send(user);
+  })
+} */
+getById = (req, res, next) => {
+  req.models.User.find({id: req.params.id}).then((user) => {
     return res.send(user);
   })
 }

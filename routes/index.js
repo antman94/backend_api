@@ -22,3 +22,5 @@ router.delete('/posts/:id', postMethods.deletePost)
 
 
 module.exports = router;
+
+
