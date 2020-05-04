@@ -17,6 +17,7 @@ getSinglePost = (req, res) => {
 createPost = (req, res, next) => {
 
   req.models.Post.find().sort({ _id: -1 }).limit(1)
+  // Get the latest added post to access it's ID 
     .then((x) => {
 
       req.models.Post.create({
@@ -40,15 +41,12 @@ replacePost = (req, res, next) => {
     title: req.body.title,
     body: req.body.body,
   }
-  const result = req.models.Post.replaceOne({ 
-    id: req.params.id }, 
-    replacementPost).then((post) => {
+  req.models.Post.replaceOne({ id: req.params.id }, replacementPost)
+    .then((post) => {
       return res.status(200).send(post)
     }).catch((error) => {
       next(error)
     })
-  result.n; // Number of documents matched
-  result.nModified; // Number of documents modified
 }
 
 updatePost = (req, res, next) => {
@@ -59,7 +57,7 @@ updatePost = (req, res, next) => {
     body: req.body.body,
   }
 
-  const post = req.models.Post.updateOne(
+  req.models.Post.updateOne(
     {id: req.params.id}, 
     updatedPost, 
     { 

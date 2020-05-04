@@ -1,11 +1,4 @@
 
-const users = require('../users/users')
-
-const { v4: uuidv4 } = require('uuid');
-
-let id = 10;
-
-
 listUsers = (req, res, next) =>{
   req.models.User.find().then((users) => {
     return res.send(users);
